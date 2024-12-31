@@ -10,22 +10,22 @@ import os
 class WikiParser:
 
     __UTF8_logos = {
-        '▄' : '[france]',       #Thunderbolt Mk.1
-        '◘' : '[france2]',      #Sea Hawk Mk.50
-        '◗' : '[france3]',      #Fokker G.IA
-        '␗' : '[china]',        #B-25J-30
-        '▃' : '[usa]',          #Spitfire LF Mk IXc
-        '○' : '[usa2]',          #P-36C
-        '⋠' : '[usa3]',         #P-47M-1-RE
-        '▂' : '[ussr]',         #P-63C-5
-        "\uf059" : '[israel]',  #A-4E Early (M)
-        '◡' : '[israel2]',      #Kfir C.10
-        '▅' : '[japan]',        #P-51C-11-NT
-        '◐' : '[italy]',       #Bf 109 F-4
-        '◔' : '[italy2]',       #Yak-9P
-        '▀' : '[germany]',      #Tempest Mk V
-        '◄' : '[germany2]',     #Su-22M4 WTD61
-        '◊' : '[germany3]'      #MiG-23BN
+        '▄' : '[france]',       #https://wiki.warthunder.ru/unit/thunderbolt_mk1
+        '◘' : '[france2]',      #https://wiki.warthunder.ru/unit/sea_hawk_fga50_netherlands
+        '◗' : '[france3]',      #https://wiki.warthunder.ru/unit/fokker_g1a
+        '␗' : '[china]',        #https://wiki.warthunder.ru/unit/db_3a_china
+        '▃' : '[usa]',          #https://wiki.warthunder.com/unit/spitfire_ix_usa
+        '○' : '[usa2]',          #https://wiki.warthunder.ru/unit/p-36c_rb
+        '⋠' : '[usa3]',         #https://wiki.warthunder.com/unit/p-47m-1-re_boxted
+        '▂' : '[ussr]',         #https://wiki.warthunder.com/unit/p-63c-5_ussr
+        "\uf059" : '[israel]',  #https://wiki.warthunder.com/unit/a_4e_early_iaf
+        '◡' : '[israel2]',      #https://wiki.warthunder.com/unit/kfir_c10_colombia
+        '▅' : '[japan]',        #https://wiki.warthunder.com/unit/f-86f-30_japan?ysclid=m5b3n4hswz675567527
+        '◐' : '[italy]',       #https://wiki.warthunder.com/unit/bf-109f-4_hungary?ysclid=m5azy7g06f628044059
+        '◔' : '[italy2]',       #https://wiki.warthunder.com/unit/yak-9p_hungary
+        '▀' : '[germany]',      #https://wiki.warthunder.com/unit/tempest_mkv_luftwaffe
+        '◄' : '[germany2]',     #https://wiki.warthunder.ru/unit/su_22m4_de_wtd61
+        '◊' : '[germany3]'      #https://wiki.warthunder.ru/unit/mig_23bn
     }
 
     def __init__(self,path_to_edge_driver : str):
@@ -65,8 +65,7 @@ class WikiParser:
         for unit in premium_units:
             name = unicodedata.normalize("NFKD",unit.find('td', class_='wt-ulist_unit-name').text)
             br = unit.find('td', class_='br').text
-            if name in result:
-                name += "_prem"
+            name += "_prem"
             result[name] = br
         
         return result
@@ -76,10 +75,13 @@ class WikiParser:
 
         for name, br in unit_dict.items():
             for logo, utf8_logo in WikiParser.__UTF8_logos.items():
-                name = name.replace(logo,utf8_logo)
+                if name.find(logo) != -1:
+                    name = name.replace(logo,'')
+                    name = utf8_logo + name
             if(br == '—'):
                 br = '0.0'
             name = name.replace('\\','')
+            name = name.strip()
             result[name] = float(br)
         
         
