@@ -186,7 +186,7 @@ class BrChecker:
 
             try:
                 img_pil = Image.fromarray(self.__image)
-                self.__image_label.config(anchor="n")
+                self.__image_label.config(anchor="ne")
                 img_tk = ImageTk.PhotoImage(image=img_pil)
                 self.__image_label.configure(image=img_tk)
                 self.__image_label.image = img_tk
@@ -204,12 +204,17 @@ class BrChecker:
 
                 for data in self.__predicted_units_data:
                     key = list(data.keys())[0]
+                    br = list(data.values())[0]
 
                     entry = Entry(
                         self.__text_frame,
                         font=("Arial", 10),
                         justify="left"
                     )
+                    if br == None:
+                        entry.config(background="firebrick1")
+                    else:
+                        entry.config(background="lime green")
                     entry.insert(0, key)  # Заполняем поле ключом
                     entry.pack(fill="x", pady=(0, row_height - entry.winfo_reqheight()))
                 
