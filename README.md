@@ -2,6 +2,7 @@
 Программа для определения макимального и минимального БР.
 
 
+![Screenshot 2025-01-02 171550](https://github.com/user-attachments/assets/b6150d6a-70e3-4db1-8b58-01061ba10a1c)
 
 
 ЗАПУСК:
