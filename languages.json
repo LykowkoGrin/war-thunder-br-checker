@@ -1,0 +1,29 @@
+{
+    "ru": 
+	{
+	 "own_br" : "Собственный БР",
+	 "screenshot_key" : "Клавиша активации",
+	 "wait" : "Ожидание пользователя",
+	 "in_process" : "Обработка...",
+	 "own_br_error" : "Неверно введен собственный БР",
+	 "apply_button" : "Применить",
+	 "vehicle_type" : "Тип техники",
+	 "apply_unit_data" : "Применить исправления",
+	 "max_br" : "Максимальный БР: ",
+	 "min_br" : "Минимальный БР: "
+	},
+    "eng":
+	{
+	 "own_br" : "Own BR",
+	 "screenshot_key" : "Activasion key",
+	 "wait" : "Waiting for the user",
+	 "in_process" : "In process...",
+	 "own_br_error" : "Your own BR was entered incorrectly",
+	 "apply_button" : "Apply",
+     "vehicle_type" : "Vehicle type",
+	 "apply_unit_data" : "Apply new data",
+	 "max_br" : "Max BR: ",
+	 "min_br" : "Min BR: "
+	}
+
+}

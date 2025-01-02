@@ -18,38 +18,24 @@ class TextReader:
         #print(self.__nation_logos)
         
     def read_table(self,screenshot) -> list:
-        vehicle_name_start_coord = [0,0]
-        vehicle_name_box = [0,0]
-
-        vehicle_icon_start_coord = [0,0]
-        vehicle_icon_box = [0,0]
-        if self.__screen_resolution == '1920x1080':
-            vehicle_name_start_coord = [390,314]
-            vehicle_name_box = [170,27]
-
-            vehicle_icon_start_coord = [560,314]
-            vehicle_icon_box = [40,27]
+        name_box = self.get_unit_name_box(self.__screen_resolution)
+        icon_box = self.get_unit_icon_box(self.__screen_resolution)
 
         units_name = []
 
         for i in range(0,16):
-            left_coord =  [vehicle_name_start_coord[0], vehicle_name_start_coord[1] + i * vehicle_name_box[1]]
-            right_coord = [vehicle_name_start_coord[0] + vehicle_name_box[0], vehicle_name_start_coord[1] + (i + 1) * vehicle_name_box[1]]
+            left_coord =  [name_box[0], name_box[1] + i * name_box[3]]
+            right_coord = [name_box[0] + name_box[2], name_box[1] + (i + 1) * name_box[3]]
             
-            left_icon_coord =  [vehicle_icon_start_coord[0], vehicle_icon_start_coord[1] + i * vehicle_icon_box[1]]
-            right_icon_coord = [vehicle_icon_start_coord[0] + vehicle_icon_box[0], vehicle_icon_start_coord[1] + (i + 1) * vehicle_icon_box[1]]
+            left_icon_coord =  [icon_box[0], icon_box[1] + i * icon_box[3]]
+            right_icon_coord = [icon_box[0] + icon_box[2], icon_box[1] + (i + 1) * icon_box[3]]
             
             cropped_img = screenshot[left_coord[1] : right_coord[1], left_coord[0] : right_coord[0]]
             cropped_icon = screenshot[left_icon_coord[1] : right_icon_coord[1], left_icon_coord[0] : right_icon_coord[0]]
+
             logo_name, _ = self.__find_nation_logo(cropped_img)
 
             is_prem = self.__check_for_prem(cropped_icon)
-            #cv2.imwrite(f"{i}.png",cropped_icon)
-
-
-            #if logo_name != '':
-            #    cv2.rectangle(cropped_img, (logo_box[0], logo_box[1]), (logo_box[2], logo_box[3]), (0, 0, 0), thickness=-1)
-                #cv2.imwrite(f"{i}.png",cropped_img)
             
             name = pytesseract.image_to_string(cropped_img, lang="rus+eng", config=self.__scan_config)
             name = name.replace('\n','')
@@ -94,6 +80,17 @@ class TextReader:
                     continue
 
                 self.__nation_logos[os.path.splitext(filename)[0]] = image
+    
+    @staticmethod
+    def get_unit_name_box(screen_resolution) -> tuple:
+        if screen_resolution == '1920x1080':
+            return (390,314,170,27)
+        return (0,0,0,0)
+    @staticmethod
+    def get_unit_icon_box(screen_resolution) -> tuple:
+        if screen_resolution == '1920x1080':
+            return (560,314,40,27)
+        return (0,0,0,0)
     
 
     @staticmethod
