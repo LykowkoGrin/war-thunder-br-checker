@@ -6,7 +6,6 @@ import os
 
 class TextReader:
     __LOGO_SIMILARITY_COEFF = 0.7
-    __PREMIUM_COLOR_MIN_AREA = 40
 
     def __init__(self,screen_resolution : str) -> None:
         self.__scan_config = r'-c tessedit_char_blacklist="[]{}|;:\$_©!?" --psm 7'
@@ -18,7 +17,6 @@ class TextReader:
         
     def read_table(self,screenshot) -> list:
         name_box = self.get_unit_name_box(self.__screen_resolution)
-        icon_box = self.get_unit_icon_box(self.__screen_resolution)
 
         units_name = []
 
@@ -26,20 +24,13 @@ class TextReader:
             left_coord =  [name_box[0], name_box[1] + i * name_box[3]]
             right_coord = [name_box[0] + name_box[2], name_box[1] + (i + 1) * name_box[3]]
             
-            left_icon_coord =  [icon_box[0], icon_box[1] + i * icon_box[3]]
-            right_icon_coord = [icon_box[0] + icon_box[2], icon_box[1] + (i + 1) * icon_box[3]]
-            
             cropped_img = screenshot[left_coord[1] : right_coord[1], left_coord[0] : right_coord[0]]
-            cropped_icon = screenshot[left_icon_coord[1] : right_icon_coord[1], left_icon_coord[0] : right_icon_coord[0]]
 
             logo_name, _ = self.__find_nation_logo(cropped_img)
-
-            is_prem = self.__check_for_prem(cropped_icon)
             
             name = pytesseract.image_to_string(cropped_img, lang="rus+eng", config=self.__scan_config)
             name = name.replace('\n','')
             name = logo_name + name
-            name += "_prem" if is_prem else ""
             units_name.append(name)
         
         return units_name
@@ -85,12 +76,7 @@ class TextReader:
         if screen_resolution == '1920x1080':
             return (390,314,170,27)
         return (0,0,0,0)
-    @staticmethod
-    def get_unit_icon_box(screen_resolution) -> tuple:
-        if screen_resolution == '1920x1080':
-            return (560,314,40,27)
-        return (0,0,0,0)
-    
+
 
     @staticmethod
     def __find_bin_logo(bin_img,bin_logo,scale_range=(0.3, 0.4),scale_step=0.01) -> dict:
@@ -115,16 +101,3 @@ class TextReader:
                 best_match['scale'] = scale
 
         return best_match
-
-    def __check_for_prem(self,vehicle_icon) -> bool:
-
-        hsv_image = cv2.cvtColor(vehicle_icon, cv2.COLOR_BGR2HSV)
-
-        lower_orange_red = np.array([0, 50, 50])      
-        upper_orange_red = np.array([20, 255, 255])   
-
-        mask = cv2.inRange(hsv_image, lower_orange_red, upper_orange_red)
-
-        white_points = cv2.countNonZero(mask)
-
-        return white_points > self.__PREMIUM_COLOR_MIN_AREA

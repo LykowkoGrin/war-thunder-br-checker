@@ -65,7 +65,8 @@ class WikiParser:
         for unit in premium_units:
             name = unicodedata.normalize("NFKD",unit.find('td', class_='wt-ulist_unit-name').text)
             br = unit.find('td', class_='br').text
-            name += "_prem"
+            if name in result:
+                name += "_prem"
             result[name] = br
         
         return result
