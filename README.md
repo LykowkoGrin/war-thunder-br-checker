@@ -3,4 +3,4 @@
 
 Так же имеется War Thunder Wiki Parser техники.
 
-Осталось мучиться с Tkinter
+Интрефейс TKinter, запус по файлу br_checker.py
