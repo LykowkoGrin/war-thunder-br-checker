@@ -60,7 +60,7 @@ class BrChecker:
 
     def start(self):
         self.__root = Tk()
-        self.__root.title("GUI Manager")
+        self.__root.title("BR checker")
 
         self._create_widgets()
         self._show_results()
