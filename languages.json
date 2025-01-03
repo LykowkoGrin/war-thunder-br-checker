@@ -3,8 +3,8 @@
 	{
 	 "own_br" : "Собственный БР",
 	 "screenshot_key" : "Клавиша активации",
-	 "wait" : "Ожидание пользователя",
-	 "in_process" : "Обработка...",
+	 "input_wait" : {"text" : "Ожидание пользователя", "color" : "orange"},
+	 "in_process" : {"text" : "Обработка...", "color" : "red"},
 	 "own_br_error" : "Неверно введен собственный БР",
 	 "apply_button" : "Применить",
 	 "vehicle_type" : "Тип техники",
@@ -16,8 +16,8 @@
 	{
 	 "own_br" : "Own BR",
 	 "screenshot_key" : "Activasion key",
-	 "wait" : "Waiting for the user",
-	 "in_process" : "In process...",
+	 "input_wait" : {"text" : "Waiting for the user", "color" : "orange"},
+	 "in_process" : {"text" : "In process...", "color" : "red"},
 	 "own_br_error" : "Your own BR was entered incorrectly",
 	 "apply_button" : "Apply",
      "vehicle_type" : "Vehicle type",

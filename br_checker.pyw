@@ -54,11 +54,11 @@ class BrChecker:
         self.__image = None
         self.__predicted_units_data = []
         self.__results_is_changed = False
+        self.__status = "input_wait"
 
         self.__input_lock = threading.Lock()
         self.__results_is_currected = False
         self.__own_br = None
-        self.__status_text = self.__text_languages[self.__language]["wait"]
 
     def start(self):
         self.__root = Tk()
@@ -105,8 +105,9 @@ class BrChecker:
         self.__vehicle_type_menu = OptionMenu(self.__root, self.__selected_vehicle_type,'plane','tank')
         self.__vehicle_type_menu.pack(pady=10)
 
-        #self.__status_text = Label(self.__root, text=self.__text_languages[self.__language]["wait"],foreground="orange2")
-        #self.__status_text.pack()
+        self.__status_text = Label(self.__root, text=self.__text_languages[self.__language][self.__status]['text'],
+                                   foreground=self.__text_languages[self.__language][self.__status]['color'])
+        self.__status_text.pack()
 
         self.__max_br_text = Label(self.__root, text='')
         self.__max_br_text.pack()
@@ -182,9 +183,11 @@ class BrChecker:
 
     def _show_results(self):
         with self.__result_lock:
-
+            self.__status_text.config(text=self.__text_languages[self.__language][self.__status]['text'],
+                                   foreground=self.__text_languages[self.__language][self.__status]['color'])
+            
             if not self.__results_is_changed:
-                self.__root.after(100, self._show_results)
+                self.__root.after(200, self._show_results)
                 return
             self.__results_is_changed = False
 
@@ -253,6 +256,8 @@ class BrChecker:
                     units = self.__units
                     screen_resolution = self.__resolution
                     own_br = self.__own_br
+                with self.__result_lock:
+                    self.__status = "in_process"
             else:
                 time.sleep(0.010)
                 continue
@@ -269,6 +274,7 @@ class BrChecker:
             with self.__result_lock:
                 self.__predicted_units_data = pred_datas
                 self.__results_is_changed = True
+                self.__status = "input_wait"
 
                 if key_is_pressed:
                     self.__image = screenshot
