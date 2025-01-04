@@ -8,17 +8,24 @@
 ЗАПУСК:
 1. Установите Python 3.10+
 2. В cmd установите необходимые библиотеки:
-   pip install opencv-python\n
+   pip install opencv-python
+   
    pip install Pillow
+   
    pip install keyboard
+   
    pip install pytesseract
+   
    pip install Levenshtein
+   
    pip install selenium
+   
    pip install beautifulsoup4
-3. Далее устаналиваем Tesseract-OCR и вводим путь к tesseract.exe в переменные среды
+   
+4. Далее устаналиваем Tesseract-OCR и вводим путь к tesseract.exe в переменные среды
    https://github.com/tesseract-ocr/tesseract/releases
-4. Запускаем файл br_checker.py и фиксим ошибки если возникли.
-5. Приложение готово
+5. Запускаем файл br_checker.py и фиксим ошибки если возникли.
+6. Приложение готово
 
 Использование:
 1. Обязательно переключаем раскладку на англиский язык
