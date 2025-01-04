@@ -23,9 +23,10 @@ class BrChecker:
 
     def save_settings(self):
         settings_dict = {
-            'language': self.__language,
+            "language": self.__language,
             'screenshot_key': self.__screenshot_key,
-            "resolution": self.__resolution
+            "resolution": self.__resolution,
+            "logos_path": self.__logos_path
         }
         with open("settings.json", 'w', encoding="utf-8") as file:
             json.dump(settings_dict, file, ensure_ascii=False, indent=4)
@@ -36,6 +37,7 @@ class BrChecker:
             self.__language = settings_dict['language']
             self.__screenshot_key = settings_dict['screenshot_key']
             self.__resolution = settings_dict["resolution"]
+            self.__logos_path = settings_dict["logos_path"]
 
     def load_languages(self):
         self.__text_languages = {}
@@ -60,7 +62,7 @@ class BrChecker:
         self.__results_is_currected = False
         self.__own_br = None
 
-        self.__text_reader = TextReader('Text_Reader/logos')
+        self.__text_reader = TextReader(self.__logos_path)
         self.__text_reader.screen_resolution = self.__resolution
 
     def start(self):
