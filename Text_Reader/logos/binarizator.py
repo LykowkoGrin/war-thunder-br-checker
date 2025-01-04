@@ -3,7 +3,6 @@ import numpy as np
 import os
 
 
-
 def binarize_images_in_folder(folder_path):
 
     for filename in os.listdir(folder_path):
