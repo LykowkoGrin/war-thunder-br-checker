@@ -8,7 +8,7 @@
 ЗАПУСК:
 1. Установите Python 3.10+
 2. В cmd установите необходимые библиотеки:
-   pip install opencv-python
+   pip install opencv-python\n
    pip install Pillow
    pip install keyboard
    pip install pytesseract
