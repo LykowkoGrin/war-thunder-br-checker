@@ -48,15 +48,20 @@ class BrChecker:
         self.load_languages()
         self.change_units_dict(False, False)
 
+        # out checker loop vars
         self.__result_lock = threading.Lock()
         self.__image = None
         self.__predicted_units_data = []
         self.__results_is_changed = False
         self.__status = "input_wait"
 
+        # in checker loop vars
         self.__input_lock = threading.Lock()
         self.__results_is_currected = False
         self.__own_br = None
+
+        self.__text_reader = TextReader('Text_Reader/logos')
+        self.__text_reader.screen_resolution = self.__resolution
 
     def start(self):
         self.__root = Tk()
@@ -82,6 +87,7 @@ class BrChecker:
     def _create_widgets(self):
         Label(
             self.__root, text=self.__text_languages[self.__language]["screenshot_key"]).pack()
+
         self.__screenshot_key_entry = Entry(self.__root, validate="key")
         self.__screenshot_key_entry.configure(validatecommand=(
             self.__root.register(lambda value: len(value) <= 1), "%P"))
@@ -90,6 +96,7 @@ class BrChecker:
 
         Label(self.__root,
               text=self.__text_languages[self.__language]["own_br"]).pack()
+
         self.__own_br_entry = Entry(self.__root, validate="key")
         self.__own_br_entry.configure(validatecommand=(
             self.__root.register(self._validate_own_br), "%P"))
@@ -161,13 +168,15 @@ class BrChecker:
         with self.__input_lock:
             self.__results_is_currected = True
 
-    def read_unit_names(self, screen_resolution) -> tuple:
-        width, height = map(int, screen_resolution.split("x"))
+    def read_unit_names(self) -> tuple:
+        width, height = map(
+            int, self.__text_reader.screen_resolution.split("x"))
         screenshot = np.array(ImageGrab.grab(bbox=(0, 0, width, height)))
-        text_reader = TextReader(screen_resolution)
-        predicted_names = text_reader.read_table(screenshot)
 
-        name_box = TextReader.get_unit_name_box(screen_resolution)
+        predicted_names = self.__text_reader.read_table(screenshot)
+
+        name_box = TextReader.get_unit_name_box(
+            self.__text_reader.screen_resolution)
         left_coord = [name_box[0], name_box[1]]
         right_coord = [name_box[0] + name_box[2],
                        name_box[1] + 16 * name_box[3]]  # 16 players
@@ -265,7 +274,7 @@ class BrChecker:
             if data_is_updated or key_is_pressed:
                 with self.__input_lock:
                     units = self.__units
-                    screen_resolution = self.__resolution
+                    self.__text_reader.screen_resolution = self.__resolution
                     own_br = self.__own_br
                 with self.__result_lock:
                     self.__status = "in_process"
@@ -279,8 +288,7 @@ class BrChecker:
                     pred_names = [list(unit_data.keys())[0]
                                   for unit_data in self.__predicted_units_data]
             if key_is_pressed:
-                pred_names, screenshot = self.read_unit_names(
-                    screen_resolution)
+                pred_names, screenshot = self.read_unit_names()
 
             pred_datas = self.predict_units_data(pred_names, own_br, units)
             print(pred_datas)

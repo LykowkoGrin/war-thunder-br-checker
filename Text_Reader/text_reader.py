@@ -8,12 +8,12 @@ import os
 class TextReader:
     __LOGO_SIMILARITY_COEFF = 0.7
 
-    def __init__(self, screen_resolution: str) -> None:
+    def __init__(self, logos_path: str) -> None:
         self.__scan_config = r'-c tessedit_char_blacklist="[]{}|;:\$_©!?" --psm 7'
-        self.__screen_resolution = screen_resolution
+        self.__screen_resolution = ''
         self.__nation_logos = {}
 
-        self.__load_nation_logos()
+        self.__load_nation_logos(logos_path)
         # print(self.__nation_logos)
 
     def read_table(self, screenshot) -> list:
@@ -61,11 +61,11 @@ class TextReader:
 
         return '', (0, 0, 0, 0)
 
-    def __load_nation_logos(self):
+    def __load_nation_logos(self, path: str):
 
-        for filename in os.listdir('Text_Reader/logos'):
+        for filename in os.listdir(path):
             if filename.endswith(".png"):
-                file_path = os.path.join('Text_Reader/logos', filename)
+                file_path = os.path.join(path, filename)
 
                 image = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
                 if image is None:
@@ -105,3 +105,11 @@ class TextReader:
                 best_match['scale'] = scale
 
         return best_match
+
+    @property
+    def screen_resolution(self):
+        return self.__screen_resolution
+
+    @screen_resolution.setter
+    def screen_resolution(self, resolution):
+        self.__screen_resolution = resolution
