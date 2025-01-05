@@ -2,5 +2,6 @@
     "language": "ru",
     "screenshot_key": "/",
     "resolution": "1920x1080",
-    "logos_path": "Text_Reader/logos"
+    "logos_path": "Text_Reader/logos/",
+    "unit_names_path": "Wiki_Parser/"
 }

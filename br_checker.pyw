@@ -15,10 +15,10 @@ class BrChecker:
     def change_units_dict(self, load_planes: bool, load_tanks: bool):
         self.__units = {}
         if load_planes:
-            with open(f"Wiki_Parser/{self.__language}/planes.json", 'r', encoding='utf-8') as file:
+            with open(f"{self.__unit_names_path}{self.__language}/planes.json", 'r', encoding='utf-8') as file:
                 self.__units.update(json.load(file))
         if load_tanks:
-            with open(f"Wiki_Parser/{self.__language}/tanks.json", 'r', encoding='utf-8') as file:
+            with open(f"{self.__unit_names_path}{self.__language}/tanks.json", 'r', encoding='utf-8') as file:
                 self.__units.update(json.load(file))
 
     def save_settings(self):
@@ -26,7 +26,8 @@ class BrChecker:
             "language": self.__language,
             'screenshot_key': self.__screenshot_key,
             "resolution": self.__resolution,
-            "logos_path": self.__logos_path
+            "logos_path": self.__logos_path,
+            "unit_names_path": self.__unit_names_path
         }
         with open("settings.json", 'w', encoding="utf-8") as file:
             json.dump(settings_dict, file, ensure_ascii=False, indent=4)
@@ -38,6 +39,7 @@ class BrChecker:
             self.__screenshot_key = settings_dict['screenshot_key']
             self.__resolution = settings_dict["resolution"]
             self.__logos_path = settings_dict["logos_path"]
+            self.__unit_names_path = settings_dict["unit_names_path"]
 
     def load_languages(self):
         self.__text_languages = {}
@@ -182,7 +184,7 @@ class BrChecker:
         left_coord = [name_box[0], name_box[1]]
         right_coord = [name_box[0] + name_box[2],
                        name_box[1] + 16 * name_box[3]]  # 16 players
-        cropped_img = screenshot[left_coord[1]: right_coord[1], left_coord[0]: right_coord[0]]
+        cropped_img = screenshot[left_coord[1]                                 : right_coord[1], left_coord[0]: right_coord[0]]
 
         return predicted_names, cropped_img
 
