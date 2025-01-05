@@ -172,7 +172,7 @@ class BrChecker:
         with self.__input_lock:
             self.__results_is_currected = True
 
-    def read_unit_names(self) -> tuple:
+    def scan_team_tab(self) -> tuple:
         width, height = map(
             int, self.__text_reader.screen_resolution.split("x"))
         screenshot = np.array(ImageGrab.grab(bbox=(0, 0, width, height)))
@@ -201,65 +201,73 @@ class BrChecker:
             pred_datas.append({pred_data[0]: pred_data[1]})
         return pred_datas
 
+    def _create_dynamic_entrys(self):
+
+        for widget in self.__text_frame.winfo_children():
+            widget.destroy()
+
+        row_height = TextReader.get_unit_name_box(self.__resolution)[3]
+
+        for data in self.__predicted_units_data:
+            key = list(data.keys())[0]
+            br = list(data.values())[0]
+
+            entry = Entry(
+                self.__text_frame,
+                font=("Arial", 10),
+                justify="left"
+            )
+            if br is None:
+                entry.config(background="firebrick1")
+            else:
+                entry.config(background="lime green")
+            entry.insert(0, key)  # Заполняем поле ключом
+            entry.pack(fill="x", pady=(
+                0, row_height - entry.winfo_reqheight()))
+
+    def _show_team_tab(self):
+        img_pil = Image.fromarray(self.__image)
+        self.__image_label.config(anchor="ne")
+        img_tk = ImageTk.PhotoImage(image=img_pil)
+        self.__image_label.configure(image=img_tk)
+        self.__image_label.image = img_tk
+
+    def _show_BR_text(self):
+        battle_ratings = [list(unit_data.values())[
+            0] for unit_data in self.__predicted_units_data if list(unit_data.values())[0] != None]
+
+        if len(battle_ratings):
+            self.__max_br_text.config(
+                text=self.__text_languages[self.__language]["max_br"] + str(max(battle_ratings)))
+            self.__min_br_text.config(
+                text=self.__text_languages[self.__language]["min_br"] + str(min(battle_ratings)))
+
     def _show_results(self):
         with self.__result_lock:
-            self.__status_text.config(text=self.__text_languages[self.__language][self.__status]['text'],
-                                      foreground=self.__text_languages[self.__language][self.__status]['color'])
+            self._show_status_text()
 
             if not self.__results_is_changed:
                 self.__root.after(200, self._show_results)
                 return
             self.__results_is_changed = False
 
-            try:
-                img_pil = Image.fromarray(self.__image)
-                self.__image_label.config(anchor="ne")
-                img_tk = ImageTk.PhotoImage(image=img_pil)
-                self.__image_label.configure(image=img_tk)
-                self.__image_label.image = img_tk
+            self._show_team_tab()
+            self._show_BR_text()
+            self._create_dynamic_entrys()
 
-                battle_ratings = [list(unit_data.values())[
-                    0] for unit_data in self.__predicted_units_data if list(unit_data.values())[0] != None]
-
-                if len(battle_ratings):
-                    self.__max_br_text.config(
-                        text=self.__text_languages[self.__language]["max_br"] + str(max(battle_ratings)))
-                    self.__min_br_text.config(
-                        text=self.__text_languages[self.__language]["min_br"] + str(min(battle_ratings)))
-
-                for widget in self.__text_frame.winfo_children():
-                    widget.destroy()
-
-                row_height = TextReader.get_unit_name_box(self.__resolution)[3]
-
-                for data in self.__predicted_units_data:
-                    key = list(data.keys())[0]
-                    br = list(data.values())[0]
-
-                    entry = Entry(
-                        self.__text_frame,
-                        font=("Arial", 10),
-                        justify="left"
-                    )
-                    if br is None:
-                        entry.config(background="firebrick1")
-                    else:
-                        entry.config(background="lime green")
-                    entry.insert(0, key)  # Заполняем поле ключом
-                    entry.pack(fill="x", pady=(
-                        0, row_height - entry.winfo_reqheight()))
-
-                button = Button(
-                    self.__text_frame,
-                    text=self.__text_languages[self.__language]["apply_unit_data"],
-                    command=self._currect_predicted_data,
-                    background="green3"
-                )
-                button.pack(side="right", fill="x", expand=True)
-            except Exception as e:
-                print(f"Ошибка: {e}")
+            button = Button(
+                self.__text_frame,
+                text=self.__text_languages[self.__language]["apply_unit_data"],
+                command=self._currect_predicted_data,
+                background="green3"
+            )
+            button.pack(side="right", fill="x", expand=True)
 
         self.__root.after(100, self._show_results)
+
+    def _show_status_text(self):
+        self.__status_text.config(text=self.__text_languages[self.__language][self.__status]['text'],
+                                  foreground=self.__text_languages[self.__language][self.__status]['color'])
 
     def checker_loop(self):
         while True:
@@ -292,7 +300,7 @@ class BrChecker:
                     pred_names = [list(unit_data.keys())[0]
                                   for unit_data in self.__predicted_units_data]
             if key_is_pressed:
-                pred_names, screenshot = self.read_unit_names()
+                pred_names, screenshot = self.scan_team_tab()
 
             pred_datas = self.predict_units_data(pred_names, own_br, units)
             print(pred_datas)
